@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Apple Web App Fullscreen Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Asteroids">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asteroids Classic Vector Arcade</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -16,6 +17,9 @@
             color: #00ffff;
             overflow: hidden;
             touch-action: none;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
         canvas {
             display: block;
@@ -31,35 +35,43 @@
 </head>
 <body class="relative w-screen h-screen flex flex-col items-center justify-between select-none">
 
-    <header class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-20 pointer-events-none bg-gradient-to-b from-gray-950/90 to-transparent">
-        <div class="flex items-center space-x-6">
+    <!-- STREAMING_CHUNK:Rendering Top HUD Header with Score, Wave, Pause & Home Buttons -->
+    <header class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-25 pointer-events-none bg-gradient-to-b from-gray-950/95 to-transparent">
+        <div class="flex items-center space-x-4">
             <div>
-                <span class="text-xs text-cyan-500 block tracking-widest">SCORE</span>
-                <span id="scoreVal" class="text-xl md:text-2xl font-black text-cyan-300 tracking-wider arcade-glow">000000</span>
+                <span class="text-[10px] text-cyan-500 block tracking-widest">SCORE</span>
+                <span id="scoreVal" class="text-base md:text-2xl font-black text-cyan-300 tracking-wider arcade-glow">000000</span>
             </div>
             <div>
-                <span class="text-xs text-cyan-500 block tracking-widest">HIGH SCORE</span>
-                <span id="highScoreVal" class="text-xl md:text-2xl font-black text-cyan-400 tracking-wider">000000</span>
+                <span class="text-[10px] text-cyan-500 block tracking-widest">HI-SCORE</span>
+                <span id="highScoreVal" class="text-base md:text-2xl font-black text-cyan-400 tracking-wider">000000</span>
             </div>
         </div>
-        <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-3">
             <div class="text-center">
-                <span class="text-xs text-cyan-500 block tracking-widest">WAVE</span>
-                <span id="waveVal" class="text-xl md:text-2xl font-black text-cyan-300 tracking-wider arcade-glow">1</span>
+                <span class="text-[10px] text-cyan-500 block tracking-widest">WAVE</span>
+                <span id="waveVal" class="text-base md:text-2xl font-black text-cyan-300 tracking-wider arcade-glow">1</span>
             </div>
             <div class="flex flex-col items-end">
-                <span class="text-xs text-cyan-500 block tracking-widest mb-1">SHIPS</span>
-                <div id="livesContainer" class="flex space-x-2"></div>
+                <span class="text-[10px] text-cyan-500 block tracking-widest mb-1">SHIPS</span>
+                <div id="livesContainer" class="flex space-x-1"></div>
+            </div>
+            <!-- In-Game HUD Control Buttons (Pause & Home) -->
+            <div class="flex space-x-2 pointer-events-auto pl-2 border-l border-cyan-900/60">
+                <button id="pauseBtn" class="px-2 py-1.5 bg-gray-900/90 border border-cyan-500/80 rounded text-cyan-400 text-xs font-bold active:bg-cyan-950 shadow">PAUSE</button>
+                <button id="homeBtn" class="px-2 py-1.5 bg-gray-900/90 border border-rose-500/80 rounded text-rose-400 text-xs font-bold active:bg-rose-950 shadow">HOME</button>
             </div>
         </div>
     </header>
 
+    <!-- STREAMING_CHUNK:Rendering Main Canvas Layout -->
     <main class="relative w-full h-full flex-grow">
-        <canvas id="gameCanvas" class="w-full h-full"></canvas>
+        <canvas id="gameCanvas" class="w-full h-full block"></canvas>
     </main>
 
-    <div id="startScreen" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gray-950/95 p-6 backdrop-blur-md">
-        <div class="text-center max-w-lg space-y-6">
+    <!-- STREAMING_CHUNK:Rendering Start Screen & Difficulty Selection -->
+    <div id="startScreen" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-gray-950/95 p-6 backdrop-blur-md overflow-y-auto">
+        <div class="text-center max-w-lg space-y-6 my-auto">
             <h1 class="text-4xl md:text-6xl font-black text-cyan-400 tracking-wider arcade-glow animate-pulse">ASTEROIDS</h1>
             <p class="text-xs md:text-sm text-cyan-600 tracking-widest uppercase">Classic Vector Arcade Edition</p>
             
@@ -77,12 +89,13 @@
                 <div class="flex justify-between"><span>Rotate:</span><span class="text-cyan-400 font-bold">Left / Right Arrows (A / D)</span></div>
                 <div class="flex justify-between"><span>Thrust:</span><span class="text-cyan-400 font-bold">Up Arrow (W)</span></div>
                 <div class="flex justify-between"><span>Fire Laser:</span><span class="text-cyan-400 font-bold">Spacebar</span></div>
-                <div class="flex justify-between"><span>Hyperspace:</span><span class="text-cyan-400 font-bold">H Key</span></div>
+                <div class="flex justify-between"><span>Warp Boost:</span><span class="text-cyan-400 font-bold">H Key / Warp Button</span></div>
             </div>
             <button id="startBtn" class="w-full py-4 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-black text-lg tracking-widest rounded-xl shadow-lg shadow-cyan-500/30 transition transform hover:scale-105 active:scale-95">INITIATE LAUNCH</button>
         </div>
     </div>
 
+    <!-- STREAMING_CHUNK:Rendering Game Over Screen -->
     <div id="gameOverScreen" class="absolute inset-0 z-30 hidden flex flex-col items-center justify-center bg-gray-950/95 p-6 backdrop-blur-md">
         <div class="text-center max-w-md space-y-6">
             <h2 class="text-4xl md:text-5xl font-black text-rose-500 tracking-wider arcade-glow-rose">GAME OVER</h2>
@@ -94,18 +107,20 @@
         </div>
     </div>
 
-    <div id="mobileControls" class="absolute bottom-4 left-4 right-4 flex justify-between items-end z-20 md:hidden pointer-events-none">
+    <!-- STREAMING_CHUNK:Rendering Mobile Touch Controls Overlay -->
+    <div id="mobileControls" class="absolute bottom-0 left-0 right-0 p-4 pb-6 flex justify-between items-end z-25 pointer-events-none bg-gradient-to-t from-gray-950/90 to-transparent">
         <div class="flex space-x-3 pointer-events-auto">
-            <button id="btnLeft" class="w-14 h-14 bg-gray-900/80 border border-cyan-500/50 rounded-full flex items-center justify-center text-cyan-400 text-xl font-bold active:bg-cyan-950 shadow-lg">◄</button>
-            <button id="btnRight" class="w-14 h-14 bg-gray-900/80 border border-cyan-500/50 rounded-full flex items-center justify-center text-cyan-400 text-xl font-bold active:bg-cyan-950 shadow-lg">►</button>
+            <button id="btnLeft" class="w-16 h-16 bg-gray-900/90 border-2 border-cyan-500/70 rounded-full flex items-center justify-center text-cyan-400 text-2xl font-bold active:bg-cyan-950 shadow-lg shadow-cyan-500/20">◄</button>
+            <button id="btnRight" class="w-16 h-16 bg-gray-900/90 border-2 border-cyan-500/70 rounded-full flex items-center justify-center text-cyan-400 text-2xl font-bold active:bg-cyan-950 shadow-lg shadow-cyan-500/20">►</button>
         </div>
-        <div class="flex space-x-3 pointer-events-auto">
-            <button id="btnHyperspace" class="w-14 h-14 bg-gray-900/80 border border-purple-500/50 rounded-full flex items-center justify-center text-purple-400 text-xs font-bold active:bg-purple-950 shadow-lg">HYPER</button>
-            <button id="btnThrust" class="w-14 h-14 bg-gray-900/80 border border-cyan-500/50 rounded-full flex items-center justify-center text-cyan-400 text-xs font-bold active:bg-cyan-950 shadow-lg">THRUST</button>
-            <button id="btnFire" class="w-16 h-16 bg-cyan-600/90 border border-cyan-300 rounded-full flex items-center justify-center text-gray-950 font-black text-xs active:bg-cyan-400 shadow-lg">FIRE</button>
+        <div class="flex space-x-3 pointer-events-auto items-end">
+            <button id="btnHyperspace" class="w-16 h-16 bg-gray-900/90 border-2 border-purple-500/70 rounded-full flex flex-col items-center justify-center text-purple-400 text-xs font-bold active:bg-purple-950 shadow-lg shadow-purple-500/20"><span>WARP</span><span class="text-[9px]">BOOST</span></button>
+            <button id="btnThrust" class="w-16 h-16 bg-gray-900/90 border-2 border-cyan-500/70 rounded-full flex flex-col items-center justify-center text-cyan-400 text-xs font-bold active:bg-cyan-950 shadow-lg shadow-cyan-500/20"><span>THRUST</span></button>
+            <button id="btnFire" class="w-20 h-20 bg-cyan-600/90 border-2 border-cyan-300 rounded-full flex items-center justify-center text-gray-950 font-black text-sm active:bg-cyan-400 shadow-xl shadow-cyan-500/40">FIRE</button>
         </div>
     </div>
 
+    <!-- STREAMING_CHUNK:Initializing Core Game Engine & Audio Logic -->
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -119,6 +134,7 @@
 
         let gameStarted = false;
         let gameOver = false;
+        let isPaused = false;
         let score = 0;
         let highScore = localStorage.getItem('asteroids_highScore') ? parseInt(localStorage.getItem('asteroids_highScore')) : 0;
         let lives = 3;
@@ -141,20 +157,18 @@
             if (!audioCtx) return;
             try {
                 if (type === 'laser') {
-                    // Laser sound: quick frequency drop chirp
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                     osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
                     osc.start();
                     osc.stop(audioCtx.currentTime + 0.15);
                 } else if (type === 'explosion') {
-                    // Explosion sound: noise buffer or low rumble
                     const bufferSize = audioCtx.sampleRate * 0.4;
                     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
                     const data = buffer.getChannelData(0);
@@ -175,7 +189,6 @@
                     gain.connect(audioCtx.destination);
                     noise.start();
                 } else if (type === 'thrust') {
-                    // Subtle white noise burst for engine thrust
                     const bufferSize = audioCtx.sampleRate * 0.08;
                     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
                     const data = buffer.getChannelData(0);
@@ -195,22 +208,19 @@
                     gain.connect(audioCtx.destination);
                     noise.start();
                 } else if (type === 'hyperspace') {
-                    // Sci-fi sweep
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
-                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.35);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
                     osc.start();
-                    osc.stop(audioCtx.currentTime + 0.3);
+                    osc.stop(audioCtx.currentTime + 0.35);
                 }
-            } catch(e) {
-                // Ignore audio context autoplay blocks prior to user gesture
-            }
+            } catch(e) {}
         }
 
         const highScoreValEl = document.getElementById('highScoreVal');
@@ -231,6 +241,8 @@
         const waveValEl = document.getElementById('waveVal');
         const finalScoreEl = document.getElementById('finalScore');
         const finalWaveEl = document.getElementById('finalWave');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const homeBtn = document.getElementById('homeBtn');
 
         const keys = {
             ArrowLeft: false,
@@ -279,12 +291,12 @@
             constructor() {
                 this.x = canvas.width / 2;
                 this.y = canvas.height / 2;
-                this.r = 19; // Slightly bigger ship
+                this.r = 21;
                 this.angle = -Math.PI / 2;
                 this.rotationSpeed = 3.8;
                 this.vx = 0;
                 this.vy = 0;
-                this.thrustPower = 380;
+                this.thrustPower = 400;
                 this.friction = 0.985;
                 this.isThrusting = false;
                 this.invulnerableTimer = 3;
@@ -364,11 +376,11 @@
             constructor(x, y, angle) {
                 this.x = x;
                 this.y = y;
-                const speed = 780;
+                const speed = 820;
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
                 this.life = 1.1;
-                this.r = 4.5;
+                this.r = 5.0;
             }
             update(dt) {
                 this.x += this.vx * dt;
@@ -382,8 +394,7 @@
             }
             draw() {
                 ctx.save();
-                // Changed from yellow to a warm golden amber
-                ctx.fillStyle = '#ffaa00';
+                ctx.fillStyle = '#ffaa00'; // Golden Amber Bullets
                 ctx.shadowColor = '#ffaa00';
                 ctx.shadowBlur = 9;
                 ctx.beginPath();
@@ -410,8 +421,8 @@
                     baseSpeed = ((4 - this.tier) * 3.5 + Math.random() * 3.0) * speedMult;
                 }
 
-                const waveSpeedBonus = (wave - 1) * 0.18 * speedMult; 
-                const speed = Math.max(1.8, baseSpeed + waveSpeedBonus);
+                const waveSpeedBonus = (wave - 1) * 0.22 * speedMult; 
+                const speed = Math.max(2.5, baseSpeed + waveSpeedBonus);
                 
                 const moveAngle = Math.random() * Math.PI * 2;
                 this.vx = Math.cos(moveAngle) * speed;
@@ -451,19 +462,15 @@
                     ctx.shadowColor = '#ff00aa';
                     ctx.shadowBlur = 12;
                 } else {
-                    // Dynamic coloring based on difficulty setting
+                    // Strict difficulty boulder colors (Insane=Crimson, Crazy=Emerald Green, Normal=Emerald Green)
                     if (currentDifficulty === 'insane') {
-                        ctx.strokeStyle = '#ff3333';
+                        ctx.strokeStyle = '#ff3333'; // Crimson Red
                         ctx.shadowColor = '#ff0000';
                         ctx.shadowBlur = 6;
-                    } else if (currentDifficulty === 'crazy') {
-                        ctx.strokeStyle = '#ff9900';
-                        ctx.shadowColor = '#ff6600';
-                        ctx.shadowBlur = 5;
                     } else {
-                        ctx.strokeStyle = '#00ffff';
-                        ctx.shadowColor = '#00ffff';
-                        ctx.shadowBlur = 4;
+                        ctx.strokeStyle = '#00ff66'; // Emerald Green (used for both Normal and Crazy)
+                        ctx.shadowColor = '#00ff66';
+                        ctx.shadowBlur = 6;
                     }
                 }
                 
@@ -487,24 +494,23 @@
             
             let baseCountMultiplier = 1;
             let speedMultiplier = 1;
-            let behemothChance = 0.3;
-            
-            // Explicitly tuned difficulty tiers for proper progression
+            let behemothChance = 0.25;
+
             if (currentDifficulty === 'normal') {
-                baseCountMultiplier = 1.0;
-                speedMultiplier = 1.25; // Noticeably livelier than baseline
-                behemothChance = 0.25;
+                baseCountMultiplier = 1.6;
+                speedMultiplier = 2.0;
+                behemothChance = 0.2;
             } else if (currentDifficulty === 'crazy') {
-                baseCountMultiplier = 1.5;
-                speedMultiplier = 1.7; // Noticeably faster & harder
-                behemothChance = 0.5;
+                baseCountMultiplier = 2.3;
+                speedMultiplier = 2.8;
+                behemothChance = 0.4;
             } else if (currentDifficulty === 'insane') {
-                baseCountMultiplier = 2.2; // Lots more initial meteorites
-                speedMultiplier = 2.3; // Very fast & challenging
-                behemothChance = 0.75;
+                baseCountMultiplier = 3.2;
+                speedMultiplier = 3.6;
+                behemothChance = 0.65;
             }
 
-            const numAsteroids = Math.min(Math.floor((3 + Math.floor(wave * 0.75)) * baseCountMultiplier), currentDifficulty === 'insane' ? 24 : 16);
+            const numAsteroids = Math.min(Math.floor((6 + Math.floor(wave * 0.95)) * baseCountMultiplier), currentDifficulty === 'insane' ? 32 : 22);
             
             for (let i = 0; i < numAsteroids; i++) {
                 let x, y;
@@ -535,19 +541,22 @@
         }
 
         function hyperspace() {
-            if (!gameStarted || gameOver) return;
+            if (!gameStarted || gameOver || isPaused) return;
             playSound('hyperspace');
-            ship.x = Math.random() * canvas.width;
-            ship.y = Math.random() * canvas.height;
-            ship.vx = 0;
-            ship.vy = 0;
-            ship.invulnerableTimer = 1.0;
-            for (let i = 0; i < 15; i++) {
+            
+            const boostPower = 900;
+            ship.vx += Math.cos(ship.angle) * boostPower;
+            ship.vy += Math.sin(ship.angle) * boostPower;
+            ship.invulnerableTimer = 0.9;
+
+            for (let i = 0; i < 22; i++) {
+                const backX = ship.x - Math.cos(ship.angle) * ship.r;
+                const backY = ship.y - Math.sin(ship.angle) * ship.r;
                 particles.push(new Particle(
-                    ship.x, ship.y,
-                    (Math.random() - 0.5) * 150,
-                    (Math.random() - 0.5) * 150,
-                    0.4,
+                    backX, backY,
+                    -Math.cos(ship.angle) * 250 + (Math.random() - 0.5) * 80,
+                    -Math.sin(ship.angle) * 250 + (Math.random() - 0.5) * 80,
+                    0.5,
                     '#ff00ff'
                 ));
             }
@@ -581,6 +590,8 @@
             initAudio();
             gameStarted = true;
             gameOver = false;
+            isPaused = false;
+            pauseBtn.textContent = 'PAUSE';
             score = 0;
             lives = 3;
             wave = 1;
@@ -594,17 +605,35 @@
             updateHUD();
         }
 
-        function triggerGameOver() {
-            gameOver = true;
-            finalScoreEl.textContent = String(score).padStart(6, '0');
-            finalWaveEl.textContent = wave;
-            if (score > highScore) {
-                highScore = score;
-                localStorage.setItem('asteroids_highScore', highScore);
-                if (highScoreValEl) highScoreValEl.textContent = String(highScore).padStart(6, '0');
-            }
-            gameOverScreen.classList.remove('hidden');
+        function returnToHome() {
+            gameStarted = false;
+            gameOver = false;
+            isPaused = false;
+            pauseBtn.textContent = 'PAUSE';
+            startScreen.classList.remove('hidden');
+            gameOverScreen.classList.add('hidden');
         }
+
+        // Pause & Home HUD Button Event Handlers (with full touch/click support)
+        const handlePauseAction = (e) => {
+            if (e) e.preventDefault();
+            if (!gameStarted || gameOver) return;
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? 'RESUME' : 'PAUSE';
+        };
+
+        const handleHomeAction = (e) => {
+            if (e) e.preventDefault();
+            if (window.confirm('Return to Home Screen? Current progress will be lost.')) {
+                returnToHome();
+            }
+        };
+
+        pauseBtn.addEventListener('click', handlePauseAction);
+        pauseBtn.addEventListener('touchstart', handlePauseAction, { passive: false });
+
+        homeBtn.addEventListener('click', handleHomeAction);
+        homeBtn.addEventListener('touchstart', handleHomeAction, { passive: false });
 
         // Keyboard Event Listeners
         window.addEventListener('keydown', e => {
@@ -615,7 +644,7 @@
             if (e.code === 'KeyH') hyperspace();
             if (e.code === 'Space') {
                 e.preventDefault();
-                if (gameStarted && !gameOver && ship) {
+                if (gameStarted && !gameOver && !isPaused && ship) {
                     playSound('laser');
                     const tipX = ship.x + Math.cos(ship.angle) * (ship.r * 1.3);
                     const tipY = ship.y + Math.sin(ship.angle) * (ship.r * 1.3);
@@ -630,7 +659,7 @@
             if (e.code === 'ArrowUp' || e.code === 'KeyW') keys.ArrowUp = false;
         });
 
-        // UI Controls
+        // UI Start / Restart Controls
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
 
@@ -648,10 +677,10 @@
             });
         });
 
-        // Touch Control Bindings
+        // Touch Control Bindings for iPhone
         const bindTouch = (elem, onStart, onEnd) => {
-            elem.addEventListener('touchstart', e => { e.preventDefault(); initAudio(); onStart(); });
-            elem.addEventListener('touchend', e => { e.preventDefault(); onEnd(); });
+            elem.addEventListener('touchstart', e => { e.preventDefault(); initAudio(); onStart(); }, { passive: false });
+            elem.addEventListener('touchend', e => { e.preventDefault(); onEnd(); }, { passive: false });
             elem.addEventListener('mousedown', e => { e.preventDefault(); initAudio(); onStart(); });
             elem.addEventListener('mouseup', e => { e.preventDefault(); onEnd(); });
         };
@@ -659,10 +688,25 @@
         bindTouch(document.getElementById('btnLeft'), () => touchLeft = true, () => touchLeft = false);
         bindTouch(document.getElementById('btnRight'), () => touchRight = true, () => touchRight = false);
         bindTouch(document.getElementById('btnThrust'), () => touchThrust = true, () => touchThrust = false);
-        document.getElementById('btnHyperspace').addEventListener('click', () => { initAudio(); hyperspace(); });
-        document.getElementById('btnFire').addEventListener('click', () => {
+        
+        const btnHyperspace = document.getElementById('btnHyperspace');
+        btnHyperspace.addEventListener('touchstart', e => { e.preventDefault(); initAudio(); hyperspace(); }, { passive: false });
+        btnHyperspace.addEventListener('click', () => { initAudio(); hyperspace(); });
+
+        const btnFire = document.getElementById('btnFire');
+        btnFire.addEventListener('touchstart', e => {
+            e.preventDefault();
             initAudio();
-            if (gameStarted && !gameOver && ship) {
+            if (gameStarted && !gameOver && !isPaused && ship) {
+                playSound('laser');
+                const tipX = ship.x + Math.cos(ship.angle) * (ship.r * 1.3);
+                const tipY = ship.y + Math.sin(ship.angle) * (ship.r * 1.3);
+                bullets.push(new Bullet(tipX, tipY, ship.angle));
+            }
+        }, { passive: false });
+        btnFire.addEventListener('click', () => {
+            initAudio();
+            if (gameStarted && !gameOver && !isPaused && ship) {
                 playSound('laser');
                 const tipX = ship.x + Math.cos(ship.angle) * (ship.r * 1.3);
                 const tipY = ship.y + Math.sin(ship.angle) * (ship.r * 1.3);
@@ -691,7 +735,7 @@
             }
             ctx.globalAlpha = 1.0;
 
-            if (gameStarted && !gameOver) {
+            if (gameStarted && !gameOver && !isPaused) {
                 ship.update(dt);
 
                 for (let i = bullets.length - 1; i >= 0; i--) {
@@ -740,9 +784,7 @@
                                 for (let s = 0; s < splitCount; s++) {
                                     const newRadius = ast.r / (splitCount === 2 ? 2.0 : 2.4);
                                     if (newRadius > 10) {
-                                        let speedMult = 1.0;
-                                        if (currentDifficulty === 'crazy') speedMult = 1.4;
-                                        if (currentDifficulty === 'insane') speedMult = 1.8;
+                                        const speedMult = currentDifficulty === 'crazy' ? 1.4 : (currentDifficulty === 'insane' ? 1.8 : 1.0);
                                         asteroids.push(new Asteroid(ast.x, ast.y, newRadius, ast.tier - 1, false, speedMult));
                                     }
                                 }
@@ -767,7 +809,15 @@
                             lives--;
                             updateHUD();
                             if (lives <= 0) {
-                                triggerGameOver();
+                                gameOver = true;
+                                finalScoreEl.textContent = String(score).padStart(6, '0');
+                                finalWaveEl.textContent = wave;
+                                if (score > highScore) {
+                                    highScore = score;
+                                    localStorage.setItem('asteroids_highScore', highScore);
+                                    if (highScoreValEl) highScoreValEl.textContent = String(highScore).padStart(6, '0');
+                                }
+                                gameOverScreen.classList.remove('hidden');
                             } else {
                                 ship.x = canvas.width / 2;
                                 ship.y = canvas.height / 2;
@@ -783,6 +833,12 @@
                 // Wave Clear Check
                 if (asteroids.length === 0) {
                     wave++;
+                    if (wave % 3 === 0) {
+                        lives++;
+                        for (let p = 0; p < 20; p++) {
+                            particles.push(new Particle(ship.x, ship.y, (Math.random()-0.5)*200, (Math.random()-0.5)*200, 0.6, '#00ffaa'));
+                        }
+                    }
                     spawnWave();
                     updateHUD();
                 }
@@ -794,6 +850,20 @@
             for (let p of particles) p.draw();
             if (gameStarted && !gameOver) ship.draw();
 
+            // Pause Overlay Display
+            if (isPaused) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(3, 7, 18, 0.75)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00ffff';
+                ctx.font = 'bold 36px Orbitron, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#00ffff';
+                ctx.shadowBlur = 15;
+                ctx.fillText('GAME PAUSED', canvas.width / 2, canvas.height / 2);
+                ctx.restore();
+            }
+
             requestAnimationFrame(gameLoop);
         }
 
@@ -801,3 +871,4 @@
     </script>
 </body>
 </html>
+```eof
