@@ -43,45 +43,38 @@
         .arcade-glow-rose {
             text-shadow: 0 0 8px rgba(255, 51, 102, 0.7), 0 0 16px rgba(255, 51, 102, 0.4);
         }
-
-        /* Support for iPhone notch safe area insets */
-        .safe-top-padding {
-            padding-top: max(0.75rem, env(safe-area-inset-top));
-        }
-        .safe-bottom-padding {
-            padding-bottom: max(1rem, env(safe-area-inset-bottom));
-        }
     </style>
 </head>
 <body class="relative w-full h-full flex flex-col justify-between">
 
-    <header class="absolute top-0 left-0 right-0 w-full px-3 py-2 safe-top-padding flex justify-between items-center z-40 pointer-events-none bg-gradient-to-b from-gray-950/95 via-gray-950/70 to-transparent">
+    <!-- Header with dynamic orientation padding -->
+    <header id="topHeader" class="absolute top-0 left-0 right-0 w-full px-3 py-2 flex justify-between items-center z-40 pointer-events-none bg-gradient-to-b from-gray-950/95 via-gray-950/80 to-transparent">
         <!-- Left Section: Score & Hi-Score -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2.5">
             <div>
-                <span class="text-[9px] text-cyan-500 block font-bold tracking-widest leading-none">SCORE</span>
-                <span id="scoreVal" class="text-sm sm:text-xl font-black text-cyan-300 tracking-wider arcade-glow">000000</span>
+                <span class="text-[8px] text-cyan-500 block font-bold tracking-widest leading-none">SCORE</span>
+                <span id="scoreVal" class="text-xs sm:text-xl font-black text-cyan-300 tracking-wider arcade-glow">000000</span>
             </div>
             <div class="hidden sm:block">
-                <span class="text-[9px] text-cyan-500 block font-bold tracking-widest leading-none">HI-SCORE</span>
-                <span id="highScoreVal" class="text-sm sm:text-xl font-black text-cyan-400 tracking-wider">000000</span>
+                <span class="text-[8px] text-cyan-500 block font-bold tracking-widest leading-none">HI-SCORE</span>
+                <span id="highScoreVal" class="text-xs sm:text-xl font-black text-cyan-400 tracking-wider">000000</span>
             </div>
         </div>
 
         <!-- Right Section: Wave, Ships, Pause & Home Buttons -->
         <div class="flex items-center space-x-2 sm:space-x-4">
             <div class="text-center">
-                <span class="text-[9px] text-cyan-500 block font-bold tracking-widest leading-none">WAVE</span>
-                <span id="waveVal" class="text-sm sm:text-xl font-black text-cyan-300 tracking-wider arcade-glow">1</span>
+                <span class="text-[8px] text-cyan-500 block font-bold tracking-widest leading-none">WAVE</span>
+                <span id="waveVal" class="text-xs sm:text-xl font-black text-cyan-300 tracking-wider arcade-glow">1</span>
             </div>
             <div class="flex flex-col items-end">
-                <span class="text-[9px] text-cyan-500 block font-bold tracking-widest leading-none mb-0.5">SHIPS</span>
+                <span class="text-[8px] text-cyan-500 block font-bold tracking-widest leading-none mb-0.5">SHIPS</span>
                 <div id="livesContainer" class="flex space-x-1"></div>
             </div>
             <!-- In-Game Interactive Buttons -->
-            <div class="flex space-x-1.5 pointer-events-auto pl-2 border-l border-cyan-800/60">
-                <button id="pauseBtn" class="px-2 py-1 bg-gray-900/90 border border-cyan-400/80 rounded text-cyan-300 text-[10px] sm:text-xs font-bold active:bg-cyan-950 shadow-md">PAUSE</button>
-                <button id="homeBtn" class="px-2 py-1 bg-gray-900/90 border border-rose-500/80 rounded text-rose-400 text-[10px] sm:text-xs font-bold active:bg-rose-950 shadow-md">HOME</button>
+            <div class="flex space-x-1 pointer-events-auto pl-1.5 border-l border-cyan-800/60">
+                <button id="pauseBtn" class="px-2.5 py-1.5 bg-gray-900/90 border border-cyan-400/80 rounded text-cyan-300 text-xs font-bold active:bg-cyan-950 shadow-md">PAUSE</button>
+                <button id="homeBtn" class="px-2.5 py-1.5 bg-gray-900/90 border border-rose-500/80 rounded text-rose-400 text-xs font-bold active:bg-rose-950 shadow-md">HOME</button>
             </div>
         </div>
     </header>
@@ -90,7 +83,7 @@
         <canvas id="gameCanvas" class="w-full h-full block"></canvas>
     </main>
 
-    <div id="startScreen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-gray-950/95 p-6 backdrop-blur-md overflow-y-auto safe-top-padding safe-bottom-padding">
+    <div id="startScreen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-gray-950/95 p-6 backdrop-blur-md overflow-y-auto">
         <div class="text-center max-w-lg space-y-5 my-auto">
             <h1 class="text-4xl md:text-6xl font-black text-cyan-400 tracking-wider arcade-glow animate-pulse">ASTEROIDS</h1>
             <p class="text-xs md:text-sm text-cyan-600 tracking-widest uppercase font-semibold">Classic Vector Arcade Edition</p>
@@ -115,7 +108,7 @@
         </div>
     </div>
 
-    <div id="gameOverScreen" class="absolute inset-0 z-50 hidden flex flex-col items-center justify-center bg-gray-950/95 p-6 backdrop-blur-md safe-top-padding safe-bottom-padding">
+    <div id="gameOverScreen" class="absolute inset-0 z-50 hidden flex flex-col items-center justify-center bg-gray-950/95 p-6 backdrop-blur-md">
         <div class="text-center max-w-md space-y-6">
             <h2 class="text-4xl md:text-5xl font-black text-rose-500 tracking-wider arcade-glow-rose">GAME OVER</h2>
             <div class="bg-gray-900/80 border border-rose-900/50 rounded-xl p-5 space-y-3">
@@ -126,7 +119,7 @@
         </div>
     </div>
 
-    <div id="mobileControls" class="absolute bottom-0 left-0 right-0 p-3 safe-bottom-padding flex justify-between items-end z-40 pointer-events-none bg-gradient-to-t from-gray-950/90 via-gray-950/50 to-transparent">
+    <div id="mobileControls" class="absolute bottom-0 left-0 right-0 p-3 flex justify-between items-end z-40 pointer-events-none bg-gradient-to-t from-gray-950/90 via-gray-950/50 to-transparent">
         <div class="flex space-x-2.5 pointer-events-auto">
             <button id="btnLeft" class="w-14 h-14 sm:w-16 sm:h-16 bg-gray-900/90 border-2 border-cyan-500/70 rounded-full flex items-center justify-center text-cyan-400 text-xl font-bold active:bg-cyan-950 shadow-lg shadow-cyan-500/20">◄</button>
             <button id="btnRight" class="w-14 h-14 sm:w-16 sm:h-16 bg-gray-900/90 border-2 border-cyan-500/70 rounded-full flex items-center justify-center text-cyan-400 text-xl font-bold active:bg-cyan-950 shadow-lg shadow-cyan-500/20">►</button>
@@ -139,17 +132,24 @@
     </div>
 
     <script>
-        // Prevent default touch scrolling across the web app
         document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const topHeader = document.getElementById('topHeader');
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+
+            if (window.innerHeight > window.innerWidth) {
+                topHeader.style.paddingTop = '3.2rem';
+            } else {
+                topHeader.style.paddingTop = '0.5rem';
+            }
         }
         window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('orientationchange', () => { setTimeout(resizeCanvas, 200); });
         resizeCanvas();
 
         let gameStarted = false;
@@ -162,7 +162,6 @@
         let currentDifficulty = 'normal';
         let nextExtraLifeScore = 10000;
 
-        // Web Audio API Context for Procedural Sound Effects
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
@@ -292,7 +291,7 @@
             constructor() {
                 this.x = canvas.width / 2;
                 this.y = canvas.height / 2;
-                this.r = 16; // Optimized sleeker size to resolve zoomed-in feeling
+                this.r = 16;
                 this.angle = -Math.PI / 2;
                 this.rotationSpeed = 4.2;
                 this.vx = 0;
@@ -395,7 +394,7 @@
             }
             draw() {
                 ctx.save();
-                ctx.fillStyle = '#ffaa00'; // Golden Amber Bullets
+                ctx.fillStyle = '#ffaa00';
                 ctx.shadowColor = '#ffaa00';
                 ctx.shadowBlur = 8;
                 ctx.beginPath();
@@ -459,17 +458,16 @@
                 ctx.rotate(this.angle);
                 
                 if (this.isBehemoth || this.tier === 4) {
-                    ctx.strokeStyle = '#ff33aa'; // Magenta Pink Behemoths
+                    ctx.strokeStyle = '#ff33aa';
                     ctx.shadowColor = '#ff00aa';
                     ctx.shadowBlur = 12;
                 } else {
-                    // Normal & Crazy mode boulders are Emerald Green (#00ff66), Insane is Crimson (#ff3333)
                     if (currentDifficulty === 'insane') {
                         ctx.strokeStyle = '#ff3333';
                         ctx.shadowColor = '#ff0000';
                         ctx.shadowBlur = 6;
                     } else {
-                        ctx.strokeStyle = '#00ff66'; // Vibrant Emerald Green
+                        ctx.strokeStyle = '#00ff66';
                         ctx.shadowColor = '#00ff66';
                         ctx.shadowBlur = 6;
                     }
@@ -611,31 +609,31 @@
             gameOver = false;
             isPaused = false;
             pauseBtn.textContent = 'PAUSE';
+            asteroids = [];
+            bullets = [];
+            particles = [];
             startScreen.classList.remove('hidden');
             gameOverScreen.classList.add('hidden');
         }
 
         const handlePauseAction = (e) => {
-            if (e) e.preventDefault();
+            if (e) { e.preventDefault(); e.stopPropagation(); }
             if (!gameStarted || gameOver) return;
             isPaused = !isPaused;
             pauseBtn.textContent = isPaused ? 'RESUME' : 'PAUSE';
         };
 
         const handleHomeAction = (e) => {
-            if (e) e.preventDefault();
-            if (window.confirm('Return to Home Screen? Current progress will be lost.')) {
-                returnToHome();
-            }
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            returnToHome();
         };
 
-        pauseBtn.addEventListener('click', handlePauseAction);
-        pauseBtn.addEventListener('touchstart', handlePauseAction, { passive: false });
+        pauseBtn.onclick = handlePauseAction;
+        pauseBtn.ontouchstart = handlePauseAction;
 
-        homeBtn.addEventListener('click', handleHomeAction);
-        homeBtn.addEventListener('touchstart', handleHomeAction, { passive: false });
+        homeBtn.onclick = handleHomeAction;
+        homeBtn.ontouchstart = handleHomeAction;
 
-        // Keyboard Event Listeners
         window.addEventListener('keydown', e => {
             initAudio();
             if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.ArrowLeft = true;
@@ -659,7 +657,6 @@
             if (e.code === 'ArrowUp' || e.code === 'KeyW') keys.ArrowUp = false;
         });
 
-        // Start / Restart UI Controls
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
 
@@ -677,7 +674,6 @@
             });
         });
 
-        // Touch Control Bindings for Mobile Devices
         const bindTouch = (elem, onStart, onEnd) => {
             elem.addEventListener('touchstart', e => { e.preventDefault(); initAudio(); onStart(); }, { passive: false });
             elem.addEventListener('touchend', e => { e.preventDefault(); onEnd(); }, { passive: false });
@@ -714,7 +710,6 @@
             }
         });
 
-        // Initialize Background Stars & Preview Ship
         ship = new Ship();
         for (let i = 0; i < 35; i++) {
             stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 1.5, alpha: Math.random() });
@@ -750,7 +745,6 @@
                     if (particles[i].life <= 0) particles.splice(i, 1);
                 }
 
-                // Bullet-Asteroid Collision
                 for (let i = bullets.length - 1; i >= 0; i--) {
                     let bulletRemoved = false;
                     for (let j = asteroids.length - 1; j >= 0; j--) {
@@ -799,7 +793,6 @@
                     if (bulletRemoved) continue;
                 }
 
-                // Ship-Asteroid Collision
                 if (ship.invulnerableTimer <= 0) {
                     for (let ast of asteroids) {
                         const dist = Math.hypot(ship.x - ast.x, ship.y - ast.y);
@@ -830,7 +823,6 @@
                     }
                 }
 
-                // Wave Clear Check
                 if (asteroids.length === 0) {
                     wave++;
                     if (wave % 3 === 0) {
@@ -844,13 +836,11 @@
                 }
             }
 
-            // Draw Entities
             for (let ast of asteroids) ast.draw();
             for (let b of bullets) b.draw();
             for (let p of particles) p.draw();
             if (gameStarted && !gameOver) ship.draw();
 
-            // Pause Overlay Display
             if (isPaused) {
                 ctx.save();
                 ctx.fillStyle = 'rgba(3, 7, 18, 0.75)';
